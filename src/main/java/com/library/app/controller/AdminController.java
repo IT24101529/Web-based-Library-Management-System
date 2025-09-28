@@ -2,6 +2,7 @@ package com.library.app.controller;
 
 import com.library.app.entity.User;
 import com.library.app.service.UserService;
+import com.library.app.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +15,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminController {
 
     private final UserService userService;
+    private final ReportService reportService;
 
     // Main admin dashboard
     @GetMapping
     public String adminDashboard() {
         return "admin/dashboard"; // We will create this new dashboard page
+    }
+
+    @GetMapping("/reports")
+    public String showReports(Model model) {
+        model.addAttribute("reportData", reportService.generateAdminDashboardReport());
+        return "admin/reports";
     }
 
     // == USER MANAGEMENT ==
@@ -56,9 +64,22 @@ public class AdminController {
     // Process the add/edit user form
     @PostMapping("/users/save")
     public String saveUser(User user, RedirectAttributes ra) {
-        userService.saveUserByAdmin(user);
-        ra.addFlashAttribute("successMessage", "User saved successfully!");
-        return "redirect:/admin/users";
+        try {
+            userService.saveUserByAdmin(user);
+            ra.addFlashAttribute("successMessage", "User saved successfully!");
+            return "redirect:/admin/users";
+        } catch (IllegalArgumentException e) {
+            // If an error is thrown (like a duplicate username), handle it here
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            ra.addFlashAttribute("user", user); // Send the user's data back to the form
+
+            // Redirect back to the correct form (add or edit)
+            if (user.getUserId() == null || user.getUserId() == 0) {
+                return "redirect:/admin/users/add";
+            } else {
+                return "redirect:/admin/users/edit/" + user.getUserId();
+            }
+        }
     }
 
     // Delete a user permanently

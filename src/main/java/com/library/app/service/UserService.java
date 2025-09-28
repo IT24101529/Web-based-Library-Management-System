@@ -65,11 +65,20 @@ public class UserService {
         boolean isNewUser = user.getUserId() == null || user.getUserId() == 0;
 
         if (isNewUser) {
+            // ADDED: Check for duplicates before saving a NEW user
+            if (userRepo.existsByUsernameIgnoreCase(user.getUsername())) {
+                throw new IllegalArgumentException("Username '" + user.getUsername() + "' already exists.");
+            }
+            if (userRepo.existsByEmailIgnoreCase(user.getEmail())) {
+                throw new IllegalArgumentException("Email '" + user.getEmail() + "' already exists.");
+            }
+
             user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
             User savedUser = userRepo.save(user);
             Role role = roleRepo.findByRoleName(user.getRole()).orElseThrow();
             userRepo.linkUserToRole(savedUser.getUserId(), role.getRoleId());
         } else {
+            // Logic for updating an existing user (remains the same)
             User existingUser = userRepo.findById(user.getUserId()).orElseThrow();
             if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
                 existingUser.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));

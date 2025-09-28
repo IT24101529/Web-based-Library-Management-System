@@ -130,4 +130,11 @@ public class UserRepository {
         String deleteUserSql = "DELETE FROM Users WHERE user_id = ?";
         return jdbcTemplate.update(deleteUserSql, id);
     }
+
+    // Method to count new users in the last 30 days
+    public int countNewUsersLast30Days() {
+        String sql = "SELECT COUNT(*) FROM Users WHERE created_at >= DATEADD(day, -30, GETDATE())";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        return (count != null) ? count : 0;
+    }
 }
