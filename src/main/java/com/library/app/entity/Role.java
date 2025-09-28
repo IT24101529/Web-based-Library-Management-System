@@ -1,17 +1,13 @@
 package com.library.app.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@Entity
-@Table(name = "Roles")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
     private Integer roleId;
-
-    @Column(name = "role_name", unique = true, nullable = false, length = 50)
     private String roleName;
 }

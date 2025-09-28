@@ -1,13 +1,14 @@
 package com.library.app.service;
 
-import com.library.app.entity.Role;
 import com.library.app.entity.User;
 import com.library.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -20,7 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        // Try to find by username first, then by email
         User u = userRepository.findByUsernameIgnoreCase(usernameOrEmail)
                 .or(() -> userRepository.findByEmailIgnoreCase(usernameOrEmail))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -29,9 +29,9 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new DisabledException("User inactive");
         }
 
-        Set<GrantedAuthority> authorities = u.getRoles().stream()
-                .map(Role::getRoleName)
-                .map(r -> r.startsWith("ROLE_") ? r : "ROLE_" + r)
+        Set<String> roles = userRepository.findRolesByUserId(u.getUserId());
+        Set<GrantedAuthority> authorities = roles.stream()
+                .map(role -> "ROLE_" + role)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
 

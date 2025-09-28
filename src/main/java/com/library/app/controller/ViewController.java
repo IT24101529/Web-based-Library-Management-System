@@ -15,10 +15,10 @@ public class ViewController {
         return "home";
     }
 
-    @GetMapping("/admin")
-    public String admin() {
-        return "admin";
-    }
+    //@GetMapping("/admin")
+    //public String admin() {
+        //return "admin";
+    //}
 
     @GetMapping("/staff")
     public String staff() {
