@@ -36,11 +36,11 @@
                               class="badge" th:text="${user.status}"></span>
             </td>
             <td>
+                <a th:href="@{/admin/users/view/{id}(id=${user.userId})}" class="btn btn-sm btn-info">View</a>
                 <a th:href="@{/admin/users/edit/{id}(id=${user.userId})}" class="btn btn-sm btn-primary">Edit</a>
-                <a th:href="@{/admin/users/deactivate/{id}(id=${user.userId})}"
-                   th:if="${user.status == 'ACTIVE'}"
-                   class="btn btn-sm btn-warning"
-                   onclick="return confirm('Are you sure?')">Deactivate</a>
+                <a th:href="@{/admin/users/delete/{id}(id=${user.userId})}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Are you sure you want to permanently delete this user?');">Delete</a>
             </td>
         </tr>
         </tbody>
