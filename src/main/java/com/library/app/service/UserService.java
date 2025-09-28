@@ -90,9 +90,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deactivateUser(int id) {
-        User user = userRepo.findById(id).orElseThrow();
-        user.setStatus("INACTIVE");
-        userRepo.update(user);
+    public void deleteUser(int id) {
+        userRepo.deleteById(id);
     }
 }

@@ -61,11 +61,25 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    // Deactivate a user
-    @GetMapping("/users/deactivate/{id}")
-    public String deactivateUser(@PathVariable("id") int id, RedirectAttributes ra) {
-        userService.deactivateUser(id);
-        ra.addFlashAttribute("successMessage", "User deactivated successfully!");
+    // Delete a user permanently
+    @GetMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable("id") int id, RedirectAttributes ra) {
+        userService.deleteUser(id);
+        ra.addFlashAttribute("successMessage", "User deleted permanently!");
         return "redirect:/admin/users";
+    }
+
+    // Method for viewing user details
+    @GetMapping("/users/view/{id}")
+    public String viewUser(@PathVariable("id") int id, Model model, RedirectAttributes ra) {
+        return userService.findUserById(id)
+                .map(user -> {
+                    model.addAttribute("user", user);
+                    return "admin/user-details"; // Path to the new details HTML page
+                })
+                .orElseGet(() -> {
+                    ra.addFlashAttribute("errorMessage", "User not found with ID: " + id);
+                    return "redirect:/admin/users";
+                });
     }
 }
