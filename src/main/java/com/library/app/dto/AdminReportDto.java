@@ -2,14 +2,12 @@ package com.library.app.dto;
 
 import lombok.Data;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class AdminReportDto {
-    // A list of the most popular books
-    private List<Map<String, Object>> mostBorrowedBooks;
+    // UPDATED: Use our new, specific DTO
+    private List<MostBorrowedBookDto> mostBorrowedBooks;
 
-    // Key statistics for the dashboard
     private int totalBorrowingsLast30Days;
     private int newUsersLast30Days;
 }
