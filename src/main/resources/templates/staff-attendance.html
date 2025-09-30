@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Staff Activity</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container">
+    <div class="content-wrap">
+        <h1>Staff Activity </h1>
+        <div th:if="${logs.isEmpty()}">
+            <p class="no-data">No attendance data available.</p>
+        </div>
+        <div th:unless="${logs.isEmpty()}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Staff Name</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>Timestamp</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="log : ${logs}">
+                    <td th:text="${log.fullName}"></td>
+                    <td th:text="${log.action}"></td>
+                    <td th:text="${log.details}"></td>
+                    <td th:text="${log.createdAt}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <a class="back-link" href="/">Back to Home</a>
+    </div>
+</div>
+</body>
+</html>
